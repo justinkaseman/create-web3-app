@@ -60,7 +60,7 @@ jobs:
       - name: Install
         run: yarn install
       - name: Compile TypeScript
-        run: lerna run tsc
+        run: yarn build
 
   test_windows:
     name: Test on Windows with Node 10

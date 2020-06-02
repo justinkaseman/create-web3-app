@@ -27,6 +27,7 @@
     ]
   },
   "scripts": {
+    "build": "lerna run tsc",
     "bootstrap": "npx lerna bootstrap",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx .",
     "prepare": "lerna run prepare --stream --concurrency=1",
