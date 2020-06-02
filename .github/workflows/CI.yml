@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - development
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - uses: actions/checkout@v2
+      - name: Install node-gyp-cache
+        run: |
+          yarn install -g node-gyp-cache
+          yarn config set node_gyp node-gyp-cache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node-10-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-10-
+      - name: Install
+        run: yarn install
+      - name: lint
+        run: yarn lint
+    #   - name: Check dependency versions
+    #     run: node scripts/check-dependencies.js
+
+  typecheck_tests:
+    name: Typecheck tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - uses: actions/checkout@v2
+      - name: Install node-gyp-cache
+        run: |
+          yarn install -g node-gyp-cache
+          yarn config set node_gyp node-gyp-cache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node-10-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-10-
+      - name: Install
+        run: yarn install
+      - name: Build tests
+        run: yarn run build-test
+
+  test_windows:
+    name: Test on Windows with Node 10
+    runs-on: windows-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node-10-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-10-
+      - name: Install
+        run: yarn install
+      - name: Run tests
+        run: yarn test
+
+  test_macos:
+    name: Test on MacOS with Node 10
+    runs-on: macos-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - uses: actions/checkout@v2
+      - name: Install node-gyp-cache
+        run: |
+          yarn install -g node-gyp-cache
+          yarn config set node_gyp node-gyp-cache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node-10-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-10-
+      - name: Install
+        run: yarn install
+      - name: Run tests
+        run: yarn test
+
+  test_linux:
+    name: Test on Linux with Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [10, 12, 13]
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: install vyper
+        run: docker pull ethereum/vyper:0.1.0b10
+      - uses: actions/checkout@v2
+      - name: Install node-gyp-cache
+        run: |
+          yarn install -g node-gyp-cache
+          yarn config set node_gyp node-gyp-cache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node }}-
+      - name: Install
+        run: yarn install
+      - name: Run tests
+        run: yarn test
