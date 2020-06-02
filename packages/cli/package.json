@@ -1,0 +1,47 @@
+{
+  "name": "create-web3-app",
+  "version": "0.0.0",
+  "author": "Justin Kaseman <justinkaseman@live.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/justinkaseman/create-web3-app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justinkaseman/create-web3-app",
+    "directory": "packages/cli"
+  },
+  "main": "internal/lib/buidler-lib.js",
+  "types": "internal/lib/buidler-lib.d.ts",
+  "description": "Quickly build against mainnet",
+  "keywords": [
+    "ethereum",
+    "smart-contracts",
+    "blockchain",
+    "dapp",
+    "javascript",
+    "tooling",
+    "solidity"
+  ],
+  "bin": {
+    "create-web3-app": "lib/index.js"
+  },
+  "bugs": {
+    "url": "https://github.com/justinkaseman/create-web3-app/issues"
+  },
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "semver": "^6.3.0",
+    "source-map-support": "^0.5.19",
+    "uuid": "3.4.0",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {},
+  "files": [
+    "lib",
+    "scripts",
+    "src/"
+  ],
+  "scripts": {},
+  "engines": {
+    "node": ">=10.13.0"
+  }
+}

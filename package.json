@@ -1,7 +1,40 @@
 {
   "name": "root",
   "private": true,
+  "license": "MIT",
   "devDependencies": {
-    "lerna": "^3.22.0"
-  }
+    "jest": "^26.0.1",
+    "lerna": "^3.22.0",
+    "lint-staged": "^10.2.7",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --cache --ext .js,.jsx,.ts,.tsx --fix",
+      "git add"
+    ],
+    "*.{md,css,scss,yaml,yml}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "bootstrap": "npx lerna bootstrap",
+    "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx .",
+    "prepare": "lerna run prepare --stream --concurrency=1",
+    "publish": "lerna publish",
+    "publish-canary": "lerna publish --canary --yes",
+    "publish-next": "lerna publish --npm-tag=next --bump=prerelease",
+    "test": "lerna run test --stream --concurrency=1 -- --colors"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
