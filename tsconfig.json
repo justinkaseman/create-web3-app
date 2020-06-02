@@ -15,5 +15,5 @@
     "esModuleInterop": true,
     "jsx": "preserve"
   },
-  "exclude": ["peril/*", "examples/*"]
+  "exclude": ["node_modules"]
 }
