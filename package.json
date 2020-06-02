@@ -3,6 +3,7 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^7.1.0",
     "jest": "^26.0.1",
     "lerna": "^3.22.0",
     "lint-staged": "^10.2.7",
