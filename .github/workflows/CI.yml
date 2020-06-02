@@ -59,8 +59,8 @@ jobs:
             ${{ runner.os }}-node-10-
       - name: Install
         run: yarn install
-      - name: Build tests
-        run: yarn run build-test
+      - name: Compile TypeScript
+        run: lerna run tsc
 
   test_windows:
     name: Test on Windows with Node 10
