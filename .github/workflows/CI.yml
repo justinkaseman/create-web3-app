@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install node-gyp-cache
         run: |
-          yarn install -g node-gyp-cache
+          yarn global add node-gyp-cache
           yarn config set node_gyp node-gyp-cache
       - uses: actions/cache@v2
         with:
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install node-gyp-cache
         run: |
-          yarn install -g node-gyp-cache
+          yarn global add node-gyp-cache
           yarn config set node_gyp node-gyp-cache
       - uses: actions/cache@v2
         with:
@@ -93,7 +93,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install node-gyp-cache
         run: |
-          yarn install -g node-gyp-cache
+          yarn global add node-gyp-cache
           yarn config set node_gyp node-gyp-cache
       - uses: actions/cache@v2
         with:
@@ -123,7 +123,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install node-gyp-cache
         run: |
-          yarn install -g node-gyp-cache
+          yarn global add node-gyp-cache
           yarn config set node_gyp node-gyp-cache
       - uses: actions/cache@v2
         with:
