@@ -8,6 +8,7 @@
     "lerna": "^3.22.0",
     "lint-staged": "^10.2.7",
     "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.3"
   },
@@ -27,10 +28,8 @@
     ]
   },
   "scripts": {
-    "build": "lerna run tsc",
-    "bootstrap": "npx lerna bootstrap",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx .",
-    "prepare": "lerna run prepare --stream --concurrency=1",
+    "prepare": "lerna run clean --stream --concurrency=1 && lerna run prepare --stream --concurrency=1",
     "publish": "lerna run tsc && lerna publish",
     "publish-canary": "lerna publish --canary --yes",
     "publish-next": "lerna publish --npm-tag=next --bump=prerelease",
