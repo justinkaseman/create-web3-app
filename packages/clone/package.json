@@ -34,10 +34,13 @@
   "bugs": {
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "dockerode": "^3.2.0"
+  },
   "scripts": {
-    "tsc": "tsc"
+    "clean": "rimraf lib",
+    "prepare": "tsc",
+    "test": "jest"
   },
   "engines": {
     "node": ">=10.13.0"

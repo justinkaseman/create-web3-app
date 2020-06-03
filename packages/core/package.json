@@ -1,5 +1,5 @@
 {
-  "name": "@create-web3-app/cli",
+  "name": "create-web3-app",
   "version": "0.0.0",
   "description": "Command line interface for create-web3-app",
   "author": "Justin Kaseman <justinkaseman@live.com>",
@@ -7,10 +7,9 @@
   "homepage": "https://github.com/justinkaseman/create-web3-app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/cli"
+    "url": "https://github.com/justinkaseman/create-web3-app"
   },
-  "main": "lib/cli.js",
+  "main": "lib/index.js",
   "types": "lib/cli.d.ts",
   "directories": {
     "lib": "lib",
@@ -35,6 +34,8 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
+    "@create-web3-app/clone": "^0.0.0",
+    "@create-web3-app/deployer": "^0.0.0",
     "chalk": "^4.0.0",
     "semver": "^6.3.0",
     "source-map-support": "^0.5.19",
@@ -43,7 +44,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "tsc": "tsc"
+    "clean": "rimraf lib",
+    "prepare": "tsc",
+    "test": "jest"
   },
   "engines": {
     "node": ">=10.13.0"

@@ -36,7 +36,11 @@
   },
   "dependencies": {},
   "devDependencies": {},
-  "scripts": {},
+  "scripts": {
+    "clean": "rimraf lib",
+    "prepare": "tsc",
+    "test": "jest"
+  },
   "engines": {
     "node": ">=10.13.0"
   }
