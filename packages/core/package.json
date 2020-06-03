@@ -9,6 +9,9 @@
     "type": "git",
     "url": "https://github.com/justinkaseman/create-web3-app"
   },
+  "bin": {
+    "create-web3-app": "lib/index.js"
+  },
   "main": "lib/index.js",
   "types": "lib/cli.d.ts",
   "directories": {
@@ -34,15 +37,15 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "@create-web3-app/clone": "^0.0.0",
-    "@create-web3-app/deployer": "^0.0.0",
     "chalk": "^4.0.0",
     "semver": "^6.3.0",
     "source-map-support": "^0.5.19",
-    "uuid": "3.4.0",
     "yargs": "^15.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.3"
+  },
   "scripts": {
     "clean": "rimraf lib",
     "prepare": "tsc",
