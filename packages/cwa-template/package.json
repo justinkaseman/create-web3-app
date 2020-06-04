@@ -1,0 +1,43 @@
+{
+  "name": "@create-web3-app/cwa-template",
+  "version": "0.0.0",
+  "description": "Default template for create-web3-app",
+  "author": "Justin Kaseman <justinkaseman@live.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/justinkaseman/create-web3-app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justinkaseman/create-web3-app",
+    "directory": "packages/cwa-template"
+  },
+  "files": [
+    "template"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "ethereum",
+    "smart-contracts",
+    "blockchain",
+    "dapp",
+    "javascript",
+    "tooling",
+    "solidity"
+  ],
+  "bugs": {
+    "url": "https://github.com/justinkaseman/create-web3-app/issues"
+  },
+  "dependencies": {
+    "@create-web3-app/clone": "^0.0.0",
+    "@create-web3-app/initializer": "^0.0.0"
+  },
+  "scripts": {
+    "clean": "rimraf lib",
+    "prepare": "tsc",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=10.13.0"
+  }
+}
