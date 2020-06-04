@@ -13,9 +13,6 @@
   "files": [
     "template"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "keywords": [
     "ethereum",
     "smart-contracts",
@@ -27,15 +24,6 @@
   ],
   "bugs": {
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
-  },
-  "dependencies": {
-    "@create-web3-app/clone": "^0.0.0",
-    "@create-web3-app/initializer": "^0.0.0"
-  },
-  "scripts": {
-    "clean": "rimraf lib",
-    "prepare": "tsc",
-    "test": "jest"
   },
   "engines": {
     "node": ">=10.13.0"

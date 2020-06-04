@@ -10,8 +10,8 @@
     "url": "https://github.com/justinkaseman/create-web3-app",
     "directory": "packages/deployer"
   },
-  "main": "lib/deployer.js",
-  "types": "lib/deployer.d.ts",
+  "main": "./lib/deployer.js",
+  "types": "./lib/deployer.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
