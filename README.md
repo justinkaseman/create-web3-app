@@ -2,6 +2,12 @@
 
 A blockchain development toolbox.
 
+### Commands
+
+- `clone`
+- `initialize`
+- `deploy`
+
 ### Technology Documentation Reference
 
 [TypeScript](https://www.typescriptlang.org/docs/home.html) - A typed superset of JavaScript that compiles to plain JavaScript.
