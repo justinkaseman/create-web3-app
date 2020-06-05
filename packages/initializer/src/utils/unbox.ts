@@ -79,7 +79,10 @@ async function copyTempIntoDestination(
   }
 
   for (const file of shouldCopy) {
-    fse.copySync(`${tmpDir}/${file}`, `${destination}/${file}`);
+    fse.copySync(
+      `${tmpDir}/packages/cwa-template/template/${file}`,
+      `${destination}/${file}`
+    );
   }
 }
 
