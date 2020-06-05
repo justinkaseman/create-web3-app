@@ -35,7 +35,7 @@ jobs:
       - name: lint
         run: yarn lint
     #   - name: Check dependency versions
-    #     run: node scripts/check-dependencies.js
+    #     run: TODO
 
   typecheck_tests:
     name: Typecheck tests
@@ -59,8 +59,8 @@ jobs:
             ${{ runner.os }}-node-10-
       - name: Install
         run: yarn install
-      - name: Compile TypeScript
-        run: yarn build
+    #   - name: Check TypeScript
+    #     run: TODO
 
   test_windows:
     name: Test on Windows with Node 10

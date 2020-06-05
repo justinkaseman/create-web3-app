@@ -1,17 +1,19 @@
 {
-  "name": "@create-web3-app/deployer",
+  "name": "create-web3-app",
   "version": "0.0.0",
-  "description": "Deploy your web3 code",
+  "description": "Command line interface for create-web3-app",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
   "homepage": "https://github.com/justinkaseman/create-web3-app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/deployer"
+    "url": "https://github.com/justinkaseman/create-web3-app"
   },
-  "main": "./lib/deployer.js",
-  "types": "./lib/deployer.d.ts",
+  "bin": {
+    "create-web3-app": "lib/index.js"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/cli.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -35,9 +37,15 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "terraform-npm": "^0.2.6"
+    "chalk": "^4.0.0",
+    "semver": "^6.3.0",
+    "source-map-support": "^0.5.19",
+    "yargs": "^15.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.3"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "rimraf lib",

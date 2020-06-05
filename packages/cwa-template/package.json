@@ -1,27 +1,18 @@
 {
-  "name": "@create-web3-app/cli",
+  "name": "@create-web3-app/cwa-template",
   "version": "0.0.0",
-  "description": "Command line interface for create-web3-app",
+  "description": "Default template for create-web3-app",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
   "homepage": "https://github.com/justinkaseman/create-web3-app",
   "repository": {
     "type": "git",
     "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/cli"
-  },
-  "main": "lib/cli.js",
-  "types": "lib/cli.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "directory": "packages/cwa-template"
   },
   "files": [
-    "lib"
+    "template"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "keywords": [
     "ethereum",
     "smart-contracts",
@@ -33,17 +24,6 @@
   ],
   "bugs": {
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
-  },
-  "dependencies": {
-    "chalk": "^4.0.0",
-    "semver": "^6.3.0",
-    "source-map-support": "^0.5.19",
-    "uuid": "3.4.0",
-    "yargs": "^15.3.1"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "tsc": "tsc"
   },
   "engines": {
     "node": ">=10.13.0"

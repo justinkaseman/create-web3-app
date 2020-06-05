@@ -10,8 +10,8 @@
     "url": "https://github.com/justinkaseman/create-web3-app",
     "directory": "packages/clone"
   },
-  "main": "lib/clone.js",
-  "types": "lib/clone.d.ts",
+  "main": "./lib/clone.js",
+  "types": "./lib/clone.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -34,10 +34,14 @@
   "bugs": {
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "dockerode": "^3.2.0"
+  },
   "scripts": {
-    "tsc": "tsc"
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "prepare": "yarn clean && yarn build",
+    "test": "jest"
   },
   "engines": {
     "node": ">=10.13.0"

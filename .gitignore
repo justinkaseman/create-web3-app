@@ -3,6 +3,7 @@ node_modules/
 .DS_Store
 
 packages/*/lib
+packages/*/dist
 
 # Logs
 logs
