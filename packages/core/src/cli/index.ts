@@ -36,7 +36,20 @@ export default () => {
       },
       function (argv) {
         console.log("Creating project from template...");
-        initializer();
+        const unboxOptions = { force: false };
+
+        // .unbox() validates & unboxes truffle box repos
+        // pass the current working directory as directory to unbox into
+        initializer.unbox(
+          "https://github.com/justinkaseman/create-web3-app",
+          process.cwd(),
+          unboxOptions,
+          {
+            events: {
+              emit: (input) => console.log(input),
+            },
+          }
+        );
       }
     )
     .help().argv;
