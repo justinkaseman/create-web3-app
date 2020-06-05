@@ -39,8 +39,9 @@
   },
   "devDependencies": {},
   "scripts": {
+    "build": "tsc",
     "clean": "rimraf lib",
-    "prepare": "tsc",
+    "prepare": "yarn clean && yarn build",
     "test": "jest"
   },
   "engines": {
