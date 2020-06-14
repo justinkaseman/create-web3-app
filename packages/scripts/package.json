@@ -1,5 +1,5 @@
 {
-  "name": "@create-web3-app/deployer",
+  "name": "@create-web3-app/scripts",
   "version": "0.0.0",
   "description": "Deploy your web3 code",
   "author": "Justin Kaseman <justinkaseman@live.com>",
@@ -8,10 +8,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/deployer"
+    "directory": "packages/scripts"
   },
-  "main": "./lib/deployer.js",
-  "types": "./lib/deployer.d.ts",
+  "main": "./lib/ipfs.js",
+  "types": "./lib/ipfs.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -35,7 +35,8 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "terraform-npm": "^0.2.6"
+    "ipfs": "^0.46.0",
+    "ipfs-http-client": "^44.2.0"
   },
   "devDependencies": {},
   "scripts": {
