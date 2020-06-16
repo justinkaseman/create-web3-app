@@ -1,64 +1,87 @@
-async function isInstalled(): Promise<boolean> {
-  // TODO: This doesn't support windows
-  const { exec } = await import("child_process");
-  return new Promise((resolve) => {
-    exec("which docker", (error?: any) => resolve(!error));
-  });
-}
+import Dockerode = require("dockerode");
+import { inquire } from "./args";
+import { fundERC20 } from "./fund";
+import { startDocker, restartContainer } from "./docker";
+import { startGanache, restartGanache } from "./ganache";
 
-async function isRunning(docker): Promise<boolean> {
-  try {
-    const result = await docker.ping();
-    return result.toString() === "OK";
-  } catch (error) {
-    return false;
-  }
-}
+const start = async (argv) => {
+  console.log("start", argv);
+  let ganache;
 
-export default async () => {
-  try {
-    const Docker = await import("dockerode");
-    if (!(await isInstalled())) throw new Error("Docker is not installed!");
-    var docker = new Docker({ socketPath: "/var/run/docker.sock" });
-    if (!(await isRunning(docker)))
-      throw new Error("Docker is not running, please start it!");
-    console.log("\n", "Pulling latest image", "\n");
-    await docker.pull("ethereum/client-go", function (err, stream) {
-      console.log("\n", "Starting docker container", "\n");
-      docker.createContainer(
-        {
-          Image: "ethereum/client-go",
-          Cmd: [],
-          name: "create-web3-app",
-          // PortBindings: {
-          //   "8545/tcp": [{ HostPort: "8545" }],
-          //   // "8546/tcp": [{ HostPort: "8546" }],
-          //   "30303/tcp": [{ HostPort: "30303" }],
-          //   // "30304/udp": [{ HostPort: "30304" }],
-          // },
-          // volume: "/Users/justinkaseman/ethereum:/root",
+  if (argv.run && argv.run.toLowerCase() === "docker")
+    ganache = await startDocker("ganache");
+
+  if (argv.run && argv.run.toLowerCase() === "node")
+    ganache = await startGanache();
+
+  if (ganache) {
+    // Run initial ERC20 token funding to initial accounts
+    try {
+      fundERC20();
+    } catch (e) {
+      console.error("Failed to seed", e);
+    }
+
+    // We need to refresh Ganache every half hour because
+    // using Infura as a provider is a full node (only 128 archive blocks),
+    // not a full archive node
+    let refresh;
+    if (argv.network === "Infura (recommended for beginners)")
+      refresh = setInterval(
+        async (container) => {
+          let reset;
+          if (argv.run && argv.run === "docker")
+            reset = restartContainer(container);
+          if (argv.run && argv.run === "node")
+            reset = restartGanache(container);
+          if (reset) {
+            try {
+              fundERC20();
+              // TODO: re-run migrations if flagged in config file
+            } catch (e) {
+              console.error("Failed to seed", e);
+            }
+          }
         },
-        (err, container) => {
-          container.start((err, data) => {
-            process.once("SIGINT", () => {
-              container.stop(function (err, data) {
-                console.log("\n", "Stopping cloned blockchain...", "\n");
-                container.remove(function (err, data) {
-                  console.log("\n", "Removing cloned blockchain...", "\n");
-                });
-              });
-            });
-            container.attach(
-              { stream: true, stdout: true, stderr: true },
-              function (err, stream) {
-                stream.pipe(process.stdout, { end: false });
-              }
-            );
-          });
-        }
+        100000,
+        ganache
       );
+
+    // // Cleanly exit
+    process.once("SIGINT", () => {
+      if (refresh) clearInterval(refresh);
+      console.log("\n", "Stopping cloned blockchain...", "\n");
+      if (argv.run && argv.run === "docker") {
+        ganache.stop(function (err, data) {
+          console.log("\n", "Removing cloned blockchain...", "\n");
+          if (!ganache) return;
+          ganache.remove(function (err, data) {
+            process.exit();
+          });
+        });
+      }
     });
-  } catch (error) {
-    console.error(error);
+
+    process.once("SIGTERM", () => {
+      if (refresh) clearInterval(refresh);
+      console.log("\n", "Stopping cloned blockchain...", "\n");
+      if (argv.run && argv.run === "docker") {
+        ganache.stop(function (err, data) {
+          console.log("\n", "Removing cloned blockchain...", "\n");
+          if (!ganache) return;
+          ganache.remove(function (err, data) {
+            process.exit();
+          });
+        });
+      }
+    });
   }
 };
+
+const main = async (argv = require("yargs").argv) => {
+  console.log("argv", argv);
+  await inquire(argv);
+  start(argv);
+};
+
+export default main;
