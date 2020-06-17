@@ -1,56 +1,64 @@
-import Dockerode = require("dockerode");
-import { inquire } from "./args";
+import { promptMissingArgs } from "./args";
 import { fundERC20 } from "./fund";
 import { startDocker, restartContainer } from "./docker";
 import { startGanache, restartGanache } from "./ganache";
+import { getConfig, loadConfig } from "./config";
+import { migrate } from "./deploy";
+import yargs = require("yargs");
 
 const start = async (argv) => {
   console.log("start", argv);
   let ganache;
 
   if (argv.run && argv.run.toLowerCase() === "docker")
-    ganache = await startDocker("ganache");
+    ganache = await startDocker("ganache", argv);
 
   if (argv.run && argv.run.toLowerCase() === "node")
-    ganache = await startGanache();
+    ganache = await startGanache(argv);
 
   if (ganache) {
     // Run initial ERC20 token funding to initial accounts
+    const config = await getConfig("cwa-config.js");
+
+    const load = await loadConfig(config);
+    console.log(config, load);
+
     try {
-      fundERC20();
+      await migrate();
+      await fundERC20();
     } catch (e) {
       console.error("Failed to seed", e);
     }
 
-    // We need to refresh Ganache every half hour because
-    // using Infura as a provider is a full node (only 128 archive blocks),
-    // not a full archive node
+    // We need to refresh Ganache every half hour if
+    // using a full node (only 128 archive blocks)
+
     let refresh;
-    if (argv.network === "Infura (recommended for beginners)")
+    if (argv.node === "full")
       refresh = setInterval(
         async (container) => {
           let reset;
           if (argv.run && argv.run === "docker")
             reset = restartContainer(container);
           if (argv.run && argv.run === "node")
-            reset = restartGanache(container);
+            reset = restartGanache(container, argv);
           if (reset) {
             try {
-              fundERC20();
-              // TODO: re-run migrations if flagged in config file
+              await migrate();
+              await fundERC20();
             } catch (e) {
               console.error("Failed to seed", e);
             }
           }
         },
-        100000,
+        30 * 60 * 1000,
         ganache
       );
 
     // // Cleanly exit
     process.once("SIGINT", () => {
-      if (refresh) clearInterval(refresh);
       console.log("\n", "Stopping cloned blockchain...", "\n");
+      if (refresh) clearInterval(refresh);
       if (argv.run && argv.run === "docker") {
         ganache.stop(function (err, data) {
           console.log("\n", "Removing cloned blockchain...", "\n");
@@ -63,8 +71,8 @@ const start = async (argv) => {
     });
 
     process.once("SIGTERM", () => {
-      if (refresh) clearInterval(refresh);
       console.log("\n", "Stopping cloned blockchain...", "\n");
+      if (refresh) clearInterval(refresh);
       if (argv.run && argv.run === "docker") {
         ganache.stop(function (err, data) {
           console.log("\n", "Removing cloned blockchain...", "\n");
@@ -78,9 +86,8 @@ const start = async (argv) => {
   }
 };
 
-const main = async (argv = require("yargs").argv) => {
-  console.log("argv", argv);
-  await inquire(argv);
+const main = async (argv = yargs.argv) => {
+  await promptMissingArgs(argv);
   start(argv);
 };
 
