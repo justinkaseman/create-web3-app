@@ -1,6 +1,7 @@
 import { Answers } from "inquirer";
 var inquirer = require("inquirer");
 import { isInstalled } from "./docker";
+const chalk = require("chalk");
 
 const initialQuestions = [
   {
@@ -34,13 +35,39 @@ const providers = {
   infura: {
     urlPrefix: "https://mainnet.infura.io/v3/",
     description: () => {
-      console.log("HEYYY");
+      console.log(
+        "\n" +
+          chalk.blue(
+            chalk.white("1.") +
+              " To get started head over to " +
+              chalk.white("https://infura.io/") +
+              " and create a new account\n" +
+              chalk.white("2.") +
+              " Create a new Ethereum project and navigate to settings\n" +
+              chalk.white("3.") +
+              ' Copy the "project id" and paste it below ' +
+              chalk.white("\u261F")
+          ) +
+          "\n"
+      );
     },
   },
   moonnet: {
     urlPrefix: "https://node.moonnet.space/uuid/",
     description: () => {
-      console.log("HEYYY");
+      console.log(
+        "\n" +
+          chalk.blue(
+            chalk.white("1.") +
+              " To get started head over to " +
+              chalk.white("https://moonnet.now.sh/dashboard") +
+              " and follow the steps\n" +
+              chalk.white("2.") +
+              ' Copy the "UUID" and paste it below ' +
+              chalk.white("\u261F")
+          ) +
+          "\n"
+      );
     },
   },
 };
@@ -99,9 +126,9 @@ function promptInput(provider): Promise<string> {
   });
 }
 
-function promptUrl(argv, parentResolve: Function): Promise<void> {
+function promptUrl(argv): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (argv["url"]) return parentResolve();
+    if (argv["url"]) return resolve();
     inquirer
       .prompt([
         {
@@ -118,7 +145,7 @@ function promptUrl(argv, parentResolve: Function): Promise<void> {
         const url = await promptInput(answers["provider"]);
         if (url) {
           argv.url = url;
-          resolve(parentResolve());
+          resolve();
         } else reject();
       })
       .catch((error) => {
@@ -144,7 +171,8 @@ export function promptMissingArgs(argv): Promise<void> {
         Object.entries(answers).forEach(([name, answer]: [string, string]) => {
           argv[name] = choiceToValue[answer];
         });
-        await promptUrl(argv, resolve);
+        await promptUrl(argv);
+        resolve();
       })
       .catch((error) => {
         if (error.isTtyError) {

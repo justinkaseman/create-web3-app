@@ -1,5 +1,4 @@
 import * as constants from "./constants";
-const config = require("../config");
 import Dockerode = require("dockerode");
 
 export async function isInstalled(): Promise<boolean> {
