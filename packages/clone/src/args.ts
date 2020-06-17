@@ -1,5 +1,6 @@
 import { Answers } from "inquirer";
 var inquirer = require("inquirer");
+import { isInstalled } from "./docker";
 
 const initialQuestions = [
   {
@@ -7,6 +8,11 @@ const initialQuestions = [
     name: "run",
     message: "How would you like to run your development blockchain?",
     choices: ["In this terminal process", "In a Docker container"],
+    validate: async function () {
+      const installed = await isInstalled();
+      if (!installed)
+        return "Docker is not currently installed on your machine\n\nHead over to https://www.docker.com/products/docker-desktop to install Docker Desktop";
+    },
   },
   {
     type: "list",
