@@ -1,11 +1,10 @@
 import clone from "../../../clone";
 import initializer from "../../../initializer";
+import { logTitle } from "./logger";
 
 import * as yargs from "yargs";
 
 export default () => {
-  console.log(process.version);
-
   yargs
     .scriptName("create-web3-app")
     .usage("$0 <cmd> [args]")
@@ -13,15 +12,23 @@ export default () => {
       "clone",
       "Start a local cloned mainnet blockchain instance",
       (yargs) => {
-        yargs.positional("name", {
+        yargs.positional("run", {
           type: "string",
-          default: "Cambi",
-          describe: "the name to say hello to",
+          describe: "where to run your development blockchain",
+        });
+        yargs.positional("node", {
+          type: "string",
+          describe: "what type of node are you referencing mainnet from",
+        });
+        yargs.positional("url", {
+          type: "string",
+          describe: "the place to access your node",
         });
       },
       function (argv) {
-        console.log("Starting clone...");
-        clone();
+        logTitle();
+        console.log("\nStarting clone...\n");
+        clone(argv);
       }
     )
     .command(
@@ -35,7 +42,8 @@ export default () => {
         });
       },
       function (argv) {
-        console.log("Creating project from template...");
+        logTitle();
+        console.log("\nCreating project from template...\n");
         const unboxOptions = { force: false };
 
         // .unbox() validates & unboxes truffle box repos
