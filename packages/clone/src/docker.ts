@@ -20,7 +20,8 @@ export async function isRunning(docker: Dockerode): Promise<boolean> {
 }
 
 export async function startDocker(
-  container: string
+  container: string,
+  argv
 ): Promise<Dockerode.Container> {
   return new Promise(async (resolve, reject) => {
     try {
@@ -34,23 +35,21 @@ export async function startDocker(
         throw new Error("Docker is not running, please start it!");
 
       console.log("\n", "Pulling latest image", "\n");
-      await docker.pull(constants.CONTAINERS[container](config).Image, {});
+      const containerConfig = constants.CONTAINERS[container](argv);
+      await docker.pull(containerConfig.Image, {});
 
-      await docker.createContainer(
-        constants.CONTAINERS[container](config),
-        (err, container) => {
-          container.start(async (err, data) => {
-            // Pipe container's logs to stdout
-            container.attach(
-              { stream: true, stdout: true, stderr: true },
-              function (err, stream) {
-                stream.pipe(process.stdout, { end: false });
-              }
-            );
-            resolve(container);
-          });
-        }
-      );
+      await docker.createContainer(containerConfig, (err, container) => {
+        container.start(async (err, data) => {
+          // Pipe container's logs to stdout
+          container.attach(
+            { stream: true, stdout: true, stderr: true },
+            function (err, stream) {
+              stream.pipe(process.stdout, { end: false });
+            }
+          );
+          resolve(container);
+        });
+      });
     } catch (error) {
       console.error(error);
       reject(false);

@@ -1,33 +1,34 @@
 const Ganache = require("ganache-core");
-const config = require("../config");
 import { LIQUIDITY } from "./constants";
 
-export function startGanache() {
+export function startGanache(argv): Promise<any> {
   return new Promise((resolve, reject) => {
-    const server = Ganache.server({
-      fork: `https://mainnet.infura.io/v3/${config.INFURA_KEY}`,
-      hostname: "0.0.0.0",
-      mnemonic: config.MNEMONIC,
-      blockTime: 5,
-      unlocked_accounts: Object.values(LIQUIDITY),
-    });
+    try {
+      const server = Ganache.server({
+        fork: argv.url,
+        hostname: "0.0.0.0",
+        mnemonic: argv.mnemonic && argv.mnemonic,
+        //   gasPrice: "0",
+        //   blockTime: 5,
+        unlocked_accounts: Object.values(LIQUIDITY),
+      });
 
-    server.listen(8545, function (err, blockchain) {
-      //   console.log("\n", "b", blockchain, "\n");
-      //   console.log("\n", "g", server.provider, "\n");
-      //   console.log("\n", "s", server, "\n");
-
-      // TODO: pipe output
-      resolve(server);
-    });
+      server.listen(8545, function (err, blockchain) {
+        // TODO: pipe output
+        resolve(server);
+      });
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 
-export function restartGanache(server) {
+export function restartGanache(server, argv): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
       server.stop();
-      resolve(await startGanache());
+      const newServer = await startGanache(argv);
+      resolve(newServer);
     } catch (e) {
       reject(e);
     }

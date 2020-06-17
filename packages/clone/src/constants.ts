@@ -1,5 +1,3 @@
-export const config = (() => {})();
-
 export const URI = "http://localhost:8545";
 
 // Currently funds from Uniswap V1
@@ -29,16 +27,16 @@ export const CONTAINERS = {
       v: "~/.create-web3-app:/geth",
     };
   },
-  ganache: (INFURA_KEY, MNEMONIC) => {
+  ganache: (argv) => {
     return {
       Image: "trufflesuite/ganache-cli",
       Cmd: [
         "ganache-cli",
         // "--db=/data/ganache",
-        `--fork="https://mainnet.infura.io/v3/${INFURA_KEY}"`,
+        `--fork="${argv.url}"`,
         "--hostname=0.0.0.0",
-        `--mnemonic="${MNEMONIC}"`,
-        "--blockTime=5",
+        argv.mnemonic ? `--mnemonic="${argv.mnemonic}"` : "",
+        // "--blockTime=5",
         "--quiet",
         ...Object.values(LIQUIDITY).map((address) => `--unlock="${address}"`),
       ],
