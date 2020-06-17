@@ -9,12 +9,11 @@ import yargs = require("yargs");
 
 const start = async (argv) => {
   let ganache;
-
+  // Start the local ganache instance
   try {
-    if (argv.run && argv.run.toLowerCase() === "docker")
+    if (argv.run && argv.run === "docker")
       ganache = await startDocker("ganache", argv);
-    if (argv.run && argv.run.toLowerCase() === "node")
-      ganache = await startGanache(argv);
+    if (argv.run && argv.run === "process") ganache = await startGanache(argv);
   } catch (error) {
     logError(error);
   }
@@ -37,13 +36,13 @@ const start = async (argv) => {
     // using a full node (only 128 archive blocks)
 
     let refresh;
-    if (argv.node === "full")
+    if (argv.node && argv.node === "full")
       refresh = setInterval(
         async (container) => {
           let reset;
           if (argv.run && argv.run === "docker")
             reset = restartContainer(container);
-          if (argv.run && argv.run === "node")
+          if (argv.run && argv.run === "process")
             reset = restartGanache(container, argv);
           if (reset) {
             try {
@@ -94,8 +93,7 @@ const main = async (argv = yargs.argv) => {
     await promptMissingArgs(argv);
     start(argv);
   } catch (error) {
-    console.log("hithere3", error);
-    process.exit();
+    console.log("Error: ", error);
   }
 };
 
