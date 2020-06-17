@@ -1,5 +1,5 @@
-import clone from "../../../clone";
-import initializer from "../../../initializer";
+import clone from "@create-web3-app/clone";
+import initializer from "@create-web3-app/initializer";
 import { logTitle } from "./logger";
 
 import * as yargs from "yargs";

@@ -1,0 +1,20 @@
+{
+  "name": "my-web3-app",
+  "version": "1.0.0",
+  "description": "A project bootstrapped with create-web3-app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "echo \"start\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@studydefi/money-legos": "^2.1.0",
+    "ethers": "^4.0.47"
+  },
+  "devDependencies": {
+    "@create-web3-app": "^2.10.2"
+  }
+}

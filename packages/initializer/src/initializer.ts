@@ -35,16 +35,16 @@ const Box = {
         unpackBoxOptions
       );
 
-      events.emit("unbox:cleaningTempFiles:start");
+      events.emit("Cleaning Temp Files:start");
       tempDirCleanup();
-      events.emit("unbox:cleaningTempFiles:succeed");
+      events.emit("Cleaning Temp Files:succeed");
 
       await utils.setUpBox(boxConfig, destination, events);
 
       return boxConfig;
     } catch (error) {
       if (tempDirCleanup) tempDirCleanup();
-      events.emit("unbox:fail");
+      events.emit("Initialize failed");
       throw error;
     }
   },
@@ -65,7 +65,7 @@ const Box = {
         ];
         const answer = await inquirer.prompt(prompt);
         if (!answer.proceed) {
-          logger.log("Unbox cancelled");
+          logger.log("Initialize cancelled");
           process.exit();
         }
       }

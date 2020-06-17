@@ -8,13 +8,13 @@ import path from "path";
 
 export = {
   downloadBox: async (url: string, destination: string, events: any) => {
-    events.emit("unbox:downloadingBox:start");
+    events.emit("Downloading Template: start");
 
     try {
       await unbox.fetchRepository(url, destination);
-      events.emit("unbox:downloadingBox:succeed");
+      events.emit("Downloading Template: succeed");
     } catch (error) {
-      events.emit("unbox:fail");
+      events.emit("Initialize failed");
       throw error;
     }
   },
@@ -34,20 +34,20 @@ export = {
   },
 
   setUpTempDirectory: (events: any) => {
-    events.emit("unbox:preparingToDownload:start");
+    events.emit("Preparing To Download: start");
     const options = {
       dir: process.cwd(),
       unsafeCleanup: true,
     };
     try {
       const tmpDir = tmp.dirSync(options);
-      events.emit("unbox:preparingToDownload:succeed");
+      events.emit("Preparing To Download: succeed");
       return {
         path: path.join(tmpDir.name, "box"),
         cleanupCallback: tmpDir.removeCallback,
       };
     } catch (error) {
-      events.emit("unbox:fail");
+      events.emit("Initialize failed");
       throw error;
     }
   },
@@ -63,12 +63,12 @@ export = {
   },
 
   setUpBox: (boxConfig: any, destination: string, events: any) => {
-    events.emit("unbox:settingUpBox:start");
+    events.emit("Unpacking template: start");
     try {
       unbox.installBoxDependencies(boxConfig, destination);
-      events.emit("unbox:settingUpBox:succeed");
+      events.emit("Unpacking template: succeed");
     } catch (error) {
-      events.emit("unbox:fail");
+      events.emit("Initialize failed");
       throw error;
     }
   },
