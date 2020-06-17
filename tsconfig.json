@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "target": "es6",
     "sourceMap": true,
-    "lib": ["es6"]
+    "lib": ["es6", "es2019"]
   },
   "exclude": ["node_modules"]
 }
