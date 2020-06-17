@@ -4,17 +4,20 @@ import { startDocker, restartContainer } from "./docker";
 import { startGanache, restartGanache } from "./ganache";
 import { getConfig, loadConfig } from "./config";
 import { migrate } from "./deploy";
+import { logError } from "./logger";
 import yargs = require("yargs");
 
 const start = async (argv) => {
-  console.log("start", argv);
   let ganache;
 
-  if (argv.run && argv.run.toLowerCase() === "docker")
-    ganache = await startDocker("ganache", argv);
-
-  if (argv.run && argv.run.toLowerCase() === "node")
-    ganache = await startGanache(argv);
+  try {
+    if (argv.run && argv.run.toLowerCase() === "docker")
+      ganache = await startDocker("ganache", argv);
+    if (argv.run && argv.run.toLowerCase() === "node")
+      ganache = await startGanache(argv);
+  } catch (error) {
+    logError(error);
+  }
 
   if (ganache) {
     // Run initial ERC20 token funding to initial accounts
@@ -27,7 +30,7 @@ const start = async (argv) => {
       await migrate();
       await fundERC20();
     } catch (e) {
-      console.error("Failed to seed", e);
+      logError("Failed to seed");
     }
 
     // We need to refresh Ganache every half hour if
@@ -87,8 +90,13 @@ const start = async (argv) => {
 };
 
 const main = async (argv = yargs.argv) => {
-  await promptMissingArgs(argv);
-  start(argv);
+  try {
+    await promptMissingArgs(argv);
+    start(argv);
+  } catch (error) {
+    console.log("hithere3", error);
+    process.exit();
+  }
 };
 
 export default main;

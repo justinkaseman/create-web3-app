@@ -27,12 +27,12 @@ export async function startDocker(
     try {
       const Docker = await import("dockerode");
 
-      if (!(await isInstalled())) throw new Error("Docker is not installed!");
+      if (!(await isInstalled())) return reject("Docker is not installed!");
 
-      var docker = new Docker({ socketPath: "/var/run/docker.sock" });
+      const docker = new Docker({ socketPath: "/var/run/docker.sock" });
 
       if (!(await isRunning(docker)))
-        throw new Error("Docker is not running, please start it!");
+        return reject("Docker is not running, please start it!");
 
       console.log("\n", "Pulling latest image", "\n");
       const containerConfig = constants.CONTAINERS[container](argv);
@@ -51,8 +51,8 @@ export async function startDocker(
         });
       });
     } catch (error) {
-      console.error(error);
-      reject(false);
+      console.error(111, error);
+      reject(error);
     }
   });
 }
