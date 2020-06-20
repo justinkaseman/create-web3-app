@@ -1,15 +1,11 @@
 {
-  "name": "@create-web3-app/cwa-template",
+  "name": "@create-web3-app/cwa-templates",
   "version": "0.0.2-alpha.0",
   "description": "Default template for create-web3-app",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
-  "homepage": "https://github.com/justinkaseman/create-web3-app",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/cwa-template"
-  },
+  "homepage": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/cwa-templates#readme",
+  "repository": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/cwa-templates",
   "files": [
     "template"
   ],
@@ -27,5 +23,6 @@
   },
   "engines": {
     "node": ">=10.13.0"
-  }
+  },
+  "gitHead": "bfbb2debd9c73bd37cd0bd98862a35e810cc5855"
 }
