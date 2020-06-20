@@ -14,7 +14,10 @@ export function startGanache(argv): Promise<any> {
       });
 
       server.listen(8545, function (err, blockchain) {
-        // TODO: pipe output
+        if (err)
+          reject(
+            `Could not start a clone of mainnet\n${err}\nIs the HTTP endpoint correct? ${argv.url}`
+          );
         resolve(server);
       });
     } catch (e) {
