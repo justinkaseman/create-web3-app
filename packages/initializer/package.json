@@ -4,12 +4,8 @@
   "description": "Initialize your web3 code",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
-  "homepage": "https://github.com/justinkaseman/create-web3-app",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/initializer"
-  },
+  "homepage": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/initializer#readme",
+  "repository": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/initializer",
   "main": "./dist/initializer.js",
   "types": "./dist/initializer.d.js",
   "directories": {
@@ -35,20 +31,17 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "@truffle/config": "^1.2.19",
+    "axios": "^0.19.2",
+    "chalk": "4.1.0",
     "fs-extra": "^8.1.0",
-    "github-download": "^0.5.0",
     "inquirer": "^7.0.0",
-    "request": "^2.85.0",
-    "request-promise-native": "^1.0.7",
     "source-map-support": "^0.5.19",
     "tmp": "0.0.33",
-    "vcsurl": "^0.1.1"
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
     "@types/inquirer": "6.0.3",
-    "@types/request-promise-native": "^1.0.16",
     "@types/tmp": "^0.1.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.6.3"
@@ -61,5 +54,6 @@
   },
   "engines": {
     "node": ">=10.13.0"
-  }
+  },
+  "gitHead": "bfbb2debd9c73bd37cd0bd98862a35e810cc5855"
 }
