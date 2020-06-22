@@ -1,7 +1,7 @@
+const inquirer = require("inquirer");
 import { Answers } from "inquirer";
-var inquirer = require("inquirer");
-import { isInstalled } from "./docker";
 const chalk = require("chalk");
+import { isInstalled } from "./docker";
 
 const initialQuestions = [
   {
@@ -81,12 +81,14 @@ const choiceToValue = {
     "archive",
 };
 
-function promptInput(provider): Promise<string> {
+function promptInput(provider, argv): Promise<string> {
   return new Promise((resolve, reject) => {
     const isFullURL = provider === "I have my own endpoint to provide";
     let providerName;
     if (!isFullURL) {
       providerName = provider.split(" ")[0].toLowerCase();
+      if (argv[providerName])
+        return resolve(providers[providerName].urlPrefix + argv[providerName]);
       providers[providerName].description();
     }
     const message = isFullURL
@@ -97,8 +99,9 @@ function promptInput(provider): Promise<string> {
     inquirer
       .prompt([
         {
-          type: "input",
+          type: "password",
           name: "url",
+          mask: "*",
           message,
           validate: function (value) {
             // TODO: more robust validation
@@ -142,7 +145,7 @@ function promptUrl(argv): Promise<void> {
         },
       ])
       .then(async (answers: Answers) => {
-        const url = await promptInput(answers["provider"]);
+        const url = await promptInput(answers["provider"], argv);
         if (url) {
           argv.url = url;
           resolve();

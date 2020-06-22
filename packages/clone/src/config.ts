@@ -9,6 +9,7 @@ export const loadConfig = async (path) => {
     const file = require(path);
     return file;
   } catch (e) {
+    console.log("err", e);
     return false;
   }
 };

@@ -29,9 +29,10 @@ export function startGanache(argv): Promise<any> {
 export function restartGanache(server, argv): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
-      server.stop();
-      const newServer = await startGanache(argv);
-      resolve(newServer);
+      server.close(async () => {
+        const newServer = await startGanache(argv);
+        if (newServer) resolve(newServer);
+      });
     } catch (e) {
       reject(e);
     }

@@ -4,12 +4,8 @@
   "description": "Deploy your web3 code",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
-  "homepage": "https://github.com/justinkaseman/create-web3-app",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/justinkaseman/create-web3-app",
-    "directory": "packages/scripts"
-  },
+  "homepage": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/scripts#readme",
+  "repository": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/scripts",
   "main": "./lib/ipfs.js",
   "types": "./lib/ipfs.d.ts",
   "directories": {
@@ -47,5 +43,6 @@
   },
   "engines": {
     "node": ">=10.13.0"
-  }
+  },
+  "gitHead": "bfbb2debd9c73bd37cd0bd98862a35e810cc5855"
 }

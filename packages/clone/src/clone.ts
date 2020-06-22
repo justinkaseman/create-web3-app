@@ -1,5 +1,4 @@
 import { promptMissingArgs } from "./args";
-import { fundERC20 } from "./fund";
 import { startDocker, restartContainer } from "./docker";
 import { startGanache, restartGanache } from "./ganache";
 import { getConfig, loadConfig } from "./config";
@@ -8,65 +7,46 @@ import { logError } from "./logger";
 import yargs = require("yargs");
 
 const start = async (argv) => {
-  let ganache;
   // Start the local ganache instance
-  try {
-    if (argv.run && argv.run === "docker")
-      ganache = await startDocker("ganache", argv);
-    if (argv.run && argv.run === "process") ganache = await startGanache(argv);
-  } catch (error) {
-    logError(error);
-  }
+  let ganache;
+  if (argv.run && argv.run === "docker")
+    ganache = await startDocker("ganache", argv);
+  if (argv.run && argv.run === "process") ganache = await startGanache(argv);
 
   if (ganache) {
-    // Run initial ERC20 token funding to initial accounts
-    const config = await getConfig("cwa-config.js");
+    await migrate();
 
-    const load = await loadConfig(config);
-    console.log(config, load);
-
-    try {
-      await migrate();
-      await fundERC20();
-    } catch (e) {
-      logError("Failed to seed");
-    }
-
-    // We need to refresh Ganache every half hour if
-    // using a full node (only 128 archive blocks)
-
-    let refresh;
+    // If using a full node
+    // We need to refresh Ganache every half hour (only 128 archive blocks)
+    let interval;
     if (argv.node && argv.node === "full")
-      refresh = setInterval(
-        async (container) => {
-          let reset;
-          if (argv.run && argv.run === "docker")
-            reset = restartContainer(container);
-          if (argv.run && argv.run === "process")
-            reset = restartGanache(container, argv);
-          if (reset) {
-            try {
-              await migrate();
-              await fundERC20();
-            } catch (e) {
-              console.error("Failed to seed", e);
-            }
+      interval = setInterval(async () => {
+        console.log("Reloading full node:\n");
+        let reset;
+        if (argv.run && argv.run === "docker")
+          reset = await restartContainer(ganache);
+        if (argv.run && argv.run === "process")
+          reset = await restartGanache(ganache, argv);
+        if (reset) {
+          ganache = reset;
+          try {
+            await migrate();
+          } catch (e) {
+            throw new Error(`Failed to seed while refreshing\n${e}`);
           }
-        },
-        30 * 60 * 1000,
-        ganache
-      );
+        }
+      }, 1 * 60 * 1000);
 
     // // Cleanly exit
     process.once("SIGINT", () => {
       console.log("\n", "Stopping cloned blockchain...", "\n");
-      if (refresh) clearInterval(refresh);
+      if (interval) clearInterval(interval);
       if (argv.run && argv.run === "docker") {
         ganache.stop(function (err, data) {
           console.log("\n", "Removing cloned blockchain...", "\n");
           if (!ganache) return;
           ganache.remove(function (err, data) {
-            process.exit();
+            process.exit(0);
           });
         });
       }
@@ -74,13 +54,13 @@ const start = async (argv) => {
 
     process.once("SIGTERM", () => {
       console.log("\n", "Stopping cloned blockchain...", "\n");
-      if (refresh) clearInterval(refresh);
+      if (interval) clearInterval(interval);
       if (argv.run && argv.run === "docker") {
         ganache.stop(function (err, data) {
           console.log("\n", "Removing cloned blockchain...", "\n");
           if (!ganache) return;
           ganache.remove(function (err, data) {
-            process.exit();
+            process.exit(0);
           });
         });
       }
@@ -89,11 +69,28 @@ const start = async (argv) => {
 };
 
 const main = async (argv = yargs.argv) => {
+  process.once("SIGINT", () => {
+    console.log("\n");
+  });
+
+  process.once("SIGTERM", () => {
+    console.log("\n");
+  });
+
   try {
+    // TODO: clean up into modular function
+    const config =
+      (await getConfig("cwa-config.js")) ||
+      (await getConfig("cwa-config.json"));
+
+    const load = await loadConfig(config);
+    Object.entries(load).forEach(([key, value]) => (argv[key] = value));
+
     await promptMissingArgs(argv);
-    start(argv);
+    await start(argv);
   } catch (error) {
-    console.log("Error: ", error);
+    logError(error);
+    process.exit(1);
   }
 };
 
