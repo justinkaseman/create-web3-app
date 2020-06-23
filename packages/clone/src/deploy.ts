@@ -1,7 +1,7 @@
 const util = require("util");
 const setTimeoutPromise = util.promisify(setTimeout);
 const exec = util.promisify(require("child_process").exec);
-var spawn = require("child_process").spawn;
+const spawn = require("child_process").spawn;
 const chalk = require("chalk");
 import { URI, LIQUIDITY } from "./constants";
 const Web3 = require("web3");
@@ -102,86 +102,88 @@ export async function fundERC20(logger): Promise<boolean> {
   });
 }
 
-export async function migrate() {
-  const spinner = new Logger();
+export function migrate() {
+  return new Promise(async (resolve, reject) => {
+    const spinner = new Logger();
 
-  try {
-    fundERC20(spinner);
-  } catch (error) {
-    throw `Error while running deployments:\n${error}`;
-  }
-
-  try {
-    // Check if the project is using Truffle
-    const truffleConfig = await getConfig("truffle-config.js");
-    if (truffleConfig) {
-      spinner.log(chalk.green("Truffle project found"));
-
-      // Make sure that Truffle is ready to use
-      const installed =
-        hasGlobalDependency("truffle") || hasLocalDependency("truffle");
-
-      if (installed) {
-        spinner.log("Deploying smart contracts...");
-
-        // Run `truffle migrate`
-        const run = spawn("truffle", ["migrate", "--network", "develop"]);
-        run.stdout.on("data", function (data) {
-          spinner.log("Deploying smart contracts..." + data.toString(), true);
-        });
-        run.on("exit", function (code) {
-          spinner.succeed(
-            `Deploying smart contracts... ${chalk.green("success!")}`
-          );
-          return;
-        });
-      }
+    try {
+      fundERC20(spinner);
+    } catch (error) {
+      throw `Error while running deployments:\n${error}`;
     }
 
-    // Check if the project is using Buidler
-    const buidler = await getConfig("buidler.config.js");
-    if (buidler) {
-      spinner.log(chalk.green("Truffle project found"));
+    try {
+      // Check if the project is using Truffle
+      const truffleConfig = await getConfig("truffle-config.js");
+      if (truffleConfig) {
+        spinner.log(chalk.green("Truffle project found"));
 
-      // Make sure that Buidler is ready to use
-      const installed =
-        hasGlobalDependency("@nomiclabs/buidler") ||
-        hasLocalDependency("@nomiclabs/buidler");
+        // Make sure that Truffle is ready to use
+        const installed =
+          hasGlobalDependency("truffle") || hasLocalDependency("truffle");
 
-      if (installed) {
-        spinner.log("Deploying smart contracts...");
+        if (installed) {
+          spinner.log("Deploying smart contracts...");
 
-        // Run compile and deploy
-        spinner.log("Deploying smart contracts...\n    Compiling");
-        await exec(`npx buidler compile`, (error, stdout, stderr) => {
-          if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-          }
-          console.log(`stdout: ${stdout}`);
-          console.error(`stderr: ${stderr}`);
-        });
-        const run = spawn("npx", [
-          "buidler",
-          "run",
-          "--network",
-          "development",
-          "scripts/deploy.js",
-        ]);
-        run.stdout.on("data", function (data) {
-          spinner.log("Deploying smart contracts..." + data.toString());
-        });
-        run.on("exit", function (code) {
-          spinner.succeed(
-            `Deploying smart contracts... ${chalk.green("success!")}`
-          );
-        });
+          // Run `truffle migrate`
+          const run = spawn("truffle", ["migrate", "--network", "develop"]);
+          run.stdout.on("data", function (data) {
+            spinner.log("Deploying smart contracts..." + data.toString(), true);
+          });
+          run.on("exit", function (code) {
+            spinner.succeed(
+              `Deploying smart contracts... ${chalk.green("success!")}`
+            );
+            return resolve();
+          });
+        }
       }
-    }
 
-    // No known project could be found
-  } catch (error) {
-    spinner.fail(`Deploying smart contracts... ${chalk.red("failed")}`);
-    throw `Error while running deployments:\n${error}`;
-  }
+      // Check if the project is using Buidler
+      const buidler = await getConfig("buidler.config.js");
+      if (buidler) {
+        spinner.log(chalk.green("Buidler project found"));
+
+        // Make sure that Buidler is ready to use
+        const installed =
+          hasGlobalDependency("@nomiclabs/buidler") ||
+          hasLocalDependency("@nomiclabs/buidler");
+
+        if (installed) {
+          spinner.log("Deploying smart contracts...");
+
+          // Run compile and deploy
+          spinner.log("Deploying smart contracts...\n    Compiling");
+          await exec(`npx buidler compile`, (error, stdout, stderr) => {
+            if (error) {
+              console.error(`exec error: ${error}`);
+              return resolve();
+            }
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+          });
+          const run = spawn("npx", [
+            "buidler",
+            "run",
+            "--network",
+            "development",
+            "scripts/deploy.js",
+          ]);
+          run.stdout.on("data", function (data) {
+            spinner.log("Deploying smart contracts..." + data.toString());
+          });
+          run.on("exit", function (code) {
+            spinner.succeed(
+              `Deploying smart contracts... ${chalk.green("success!")}`
+            );
+          });
+        }
+      }
+
+      // No known project could be found
+    } catch (error) {
+      spinner.fail(`Deploying smart contracts... ${chalk.red("failed")}`);
+      throw `Error while running deployments:\n${error}`;
+    }
+  });
 }

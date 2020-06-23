@@ -14,7 +14,11 @@ const start = async (argv) => {
   if (argv.run && argv.run === "process") ganache = await startGanache(argv);
 
   if (ganache) {
-    await migrate();
+    migrate().then(() => {
+      console.log(
+        "Your clone of mainnet is ready to be used at http://localhost:8545 🚀"
+      );
+    });
 
     // If using a full node
     // We need to refresh Ganache every half hour (only 128 archive blocks)
@@ -35,7 +39,7 @@ const start = async (argv) => {
             throw new Error(`Failed to seed while refreshing\n${e}`);
           }
         }
-      }, 1 * 60 * 1000);
+      }, 30 * 60 * 1000);
 
     // // Cleanly exit
     process.once("SIGINT", () => {

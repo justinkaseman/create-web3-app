@@ -37,15 +37,15 @@ export class Logger {
     if (text) this.logger.text = message;
   }
 
-  succeed(message: string, spin?: boolean) {
+  succeed(message: string, continueSpinning?: boolean) {
     if (this.verbose) return ora(oraOptions).succeed(message);
     this.logger.succeed(message);
-    if (spin) this.logger = ora(oraOptions).start();
+    if (continueSpinning) this.logger = ora(oraOptions).start();
   }
 
-  fail(message: string, spin?: boolean) {
+  fail(message: string, continueSpinning?: boolean) {
     if (this.verbose) return ora(oraOptions).fail(message);
     this.logger.fail(message);
-    if (spin) this.logger = ora(oraOptions).start();
+    if (continueSpinning) this.logger = ora(oraOptions).start();
   }
 }
