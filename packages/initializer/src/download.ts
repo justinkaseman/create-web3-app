@@ -8,22 +8,17 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const fs = require("fs");
 const fse = require("fs-extra");
 const url = require("url");
 const axios = require("axios");
-const util = require("util");
-const setTimeoutPromise = util.promisify(setTimeout);
 
 const AUTHOR = 1;
 const REPOSITORY = 2;
 const BRANCH = 4;
 
-const pathCache = [];
-
 let repoInfo: any = {};
 
-let outputDirectory = `${process.cwd()}`;
+let outputDirectory = `${process.cwd()}/`;
 let localRootDirectory = "";
 
 const basicOptions = {
@@ -79,7 +74,7 @@ function parseInfo(repoInfo) {
     info.rootDirectoryName = `template/`;
   }
 
-  if (repoInfo.to && fs.existsSync(repoInfo.to)) {
+  if (repoInfo.to) {
     if (repoInfo.to[repoInfo.to.length - 1] !== "/")
       repoInfo.to = repoInfo.to + "/";
     outputDirectory = repoInfo.to;
@@ -99,7 +94,7 @@ function extractFilenameAndDirectoryFrom(path) {
   };
 }
 
-function downloadFile(url, pathname) {
+function downloadFile(url, pathname, logger): Promise<Boolean> {
   return new Promise((resolve, reject) => {
     axios({
       ...basicOptions,
@@ -107,24 +102,21 @@ function downloadFile(url, pathname) {
       url,
     })
       .then(async (response) => {
-        if (pathCache.indexOf(pathname.directory) === -1) {
-          await fse.mkdirp(pathname.directory);
-          pathCache.push(pathname.directory);
-        }
-
+        await fse.mkdirp(pathname.directory);
         const localPathname = pathname.directory + pathname.filename;
         response.data
-          .pipe(fs.createWriteStream(localPathname))
-          .on("error", (error) => {})
+          .pipe(fse.createWriteStream(localPathname))
+          .on("error", (error) => {
+            console.log("ERROR", error);
+          })
           .on("close", () => {
-            // TODO: logger log
-            //   console.log("download file", pathname.filename);
-            resolve();
+            logger.log(`Downloading: ${pathname.filename}`);
+            resolve(true);
           });
       })
       .catch((error) => {
-        console.log("Error downloading file:", error);
-        reject(error);
+        console.log("Error downloading file: ", pathname.filename);
+        reject(false);
       });
   });
 }
@@ -146,85 +138,93 @@ function constructLocalPathname(repoPath) {
   };
 }
 
-function processResponse(response, dirPaths) {
-  return new Promise((resolve, reject) => {
+function processResponse(response, dirPaths, logger): Promise<Boolean> {
+  return new Promise(async (resolve, reject) => {
     const { data } = response;
+    const promises = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i].type === "dir") {
         dirPaths.push(data[i].path);
       } else if (data[i].download_url) {
         const pathname = constructLocalPathname(data[i].path);
-        // Using a timeout to avoid rate limiting from Github
-        setTimeoutPromise((i + 1) * 1000).then(async (value) => {
-          const dl = await downloadFile(data[i].download_url, pathname);
-          if (dl) resolve();
-        });
+        promises.push(downloadFile(data[i].download_url, pathname, logger));
       } else {
         console.log("Error:", data[i]);
-        reject();
+        reject(false);
       }
     }
+    if (promises.length === 0 || Promise.all(promises)) resolve(true);
   });
 }
 
-function iterateDirectory(dirPaths) {
+function iterateDirectory(dirPaths, logger): Promise<Boolean> {
   return new Promise((resolve, reject) => {
     axios({
       ...basicOptions,
       url: repoInfo.urlPrefix + dirPaths.pop() + repoInfo.urlPostfix,
     })
       .then(async (response) => {
-        const prRes = await processResponse(response, dirPaths);
-        if (prRes) {
-          resolve();
-        }
+        const finished = await processResponse(response, dirPaths, logger);
+        if (finished) resolve(true);
       })
       .catch((error) => {
-        console.log("Error iterating Github directory:", error);
+        console.log(
+          "\nRate limit exceeded, please try initializing again in an hour\n"
+        );
+        reject(false);
       });
   });
 }
 
-function downloadDirectory(data) {
+function downloadDirectory(response, logger): Promise<Boolean> {
   return new Promise(async (resolve, reject) => {
-    const dirPaths = [];
-    dirPaths.push(repoInfo.resPath);
-    processResponse(data, dirPaths);
-    while (dirPaths.length !== 0) {
-      await iterateDirectory(dirPaths);
+    try {
+      const dirPaths = [];
+      dirPaths.push(repoInfo.resPath);
+      await processResponse(response, dirPaths, logger);
+
+      while (dirPaths.length !== 0) {
+        const finished = await iterateDirectory(dirPaths, logger);
+        if (finished) continue;
+      }
+      resolve(true);
+    } catch (err) {
+      reject(false);
     }
-    resolve();
   });
 }
 
-export function githubDownload(paras): Promise<Boolean> {
+export function githubDownload(options, logger): Promise<Boolean> {
   return new Promise((resolve, reject) => {
-    repoInfo = parseInfo(paras);
+    repoInfo = parseInfo(options);
     // Download part(s) of repository
-    console.log(outputDirectory, "output dir");
     axios({
       ...basicOptions,
       url: repoInfo.urlPrefix + repoInfo.resPath + repoInfo.urlPostfix,
     })
       .then(async (response) => {
         if (response.data instanceof Array) {
-          const { data } = response;
-          const dlDir = await downloadDirectory(data);
-          if (dlDir) resolve();
+          const finished = await downloadDirectory(response, logger);
+          if (finished) {
+            resolve(true);
+          }
         } else {
           const partialPath = extractFilenameAndDirectoryFrom(
             decodeURI(repoInfo.resPath)
           );
-          downloadFile(response.data.download_url, {
-            ...partialPath,
-            directory: outputDirectory,
-          });
+          downloadFile(
+            response.data.download_url,
+            {
+              ...partialPath,
+              directory: outputDirectory,
+            },
+            logger
+          );
           localRootDirectory = outputDirectory;
           resolve(true);
         }
       })
       .catch((error) => {
-        console.log("Error contacting Github:", error);
         reject(false);
       });
   });

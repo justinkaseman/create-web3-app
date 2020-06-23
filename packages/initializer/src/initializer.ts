@@ -1,4 +1,5 @@
 import "source-map-support/register";
+const chalk = require("chalk");
 import Logger from "./logger";
 import {
   setUpTempDirectory,
@@ -19,19 +20,24 @@ const initialize = async (argv) => {
 
     await downloadIntoTemp(argv.template, tempDirectory.path, logger);
 
-    await unpack(tempDirectory + `/${argv.template}`, destination, logger);
+    await unpack(tempDirectory.path + `/${argv.template}`, destination, {
+      logger,
+      force: argv.force,
+    });
 
     await cleanupTemp(tempDirectory, logger);
 
     await install(destination, logger);
 
-    logger.succeed(
-      "Your create-web3-app template is ready to go!\nCheck the README.md file for getting started information"
+    console.log(
+      chalk.cyan(
+        "\nYour create-web3-app template is ready to go!\n\nCheck the README.md file for more information on getting started"
+      )
     );
   } catch (error) {
     tempDirectory?.cleanup();
-    logger.fail("Failed to initialize template");
-    throw error;
+    logger.fail(chalk.red("Failed to initialize template"));
+    process.exit(1);
   }
 };
 

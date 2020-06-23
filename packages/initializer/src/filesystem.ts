@@ -3,6 +3,7 @@ import inquirer from "inquirer";
 import tmp from "tmp";
 import process from "process";
 import path from "path";
+const chalk = require("chalk");
 import { githubDownload } from "./download";
 
 export const checkEmptyDirectory = async (destination: string) => {
@@ -28,12 +29,10 @@ export const checkEmptyDirectory = async (destination: string) => {
 export const setUpTempDirectory = (logger) => {
   logger.log("Setting up a temporary directory...");
   const options = {
-    dir: process.cwd(),
     unsafeCleanup: true,
   };
   try {
     const tmpDir = tmp.dirSync(options);
-    logger.log("Successfully set up a temporary directory!");
     return {
       tmpDir: tmpDir,
       path: path.join(tmpDir.name, "temp"),
@@ -47,12 +46,18 @@ export const setUpTempDirectory = (logger) => {
 export const downloadIntoTemp = async (template, path, logger) => {
   logger.log("Downloading template from Github...");
   try {
-    const download = await githubDownload({
-      url: `https://github.com/justinkaseman/create-web3-app/tree/master/packages/cwa-templates/${template}`,
-      to: path,
-    });
+    const download = await githubDownload(
+      {
+        url: `https://github.com/justinkaseman/create-web3-app/tree/develop/packages/cwa-templates/${template}`,
+        to: path,
+      },
+      logger
+    );
     if (download) {
-      logger.log("Successfully downloaded template from Github!");
+      logger.succeed(
+        `Downloading template from Github...${chalk.green("success!")}`,
+        true
+      );
       return;
     }
   } catch (error) {
@@ -60,19 +65,15 @@ export const downloadIntoTemp = async (template, path, logger) => {
   }
 };
 
-async function promptOverwrites(
-  fileCollisions: Array<string>,
-  logger = console
-) {
+async function promptOverwrites(fileCollisions: Array<string>, logger) {
   const overwriteContents = [];
-
+  if (logger) logger.stop();
   for (const file of fileCollisions) {
-    logger.log(`${file} already exists in this directory...`);
     const overwriting: inquirer.Questions = [
       {
         type: "confirm",
         name: "overwrite",
-        message: `Overwrite ${file}?`,
+        message: `${file} already exists in this directory...\nOverwrite ${file}?`,
         default: false,
       },
     ];
@@ -84,6 +85,8 @@ async function promptOverwrites(
     }
   }
 
+  if (logger) logger.start();
+
   return overwriteContents;
 }
 
@@ -92,8 +95,10 @@ export async function unpack(
   destination: string,
   options: any
 ) {
-  fs.ensureDirSync(destination);
   const { force, logger } = options;
+  logger.log("Unpacking template...");
+
+  fs.ensureDirSync(destination);
   const contents = fs.readdirSync(tempDir);
   const destinationContents = fs.readdirSync(destination);
 
@@ -116,9 +121,16 @@ export async function unpack(
   for (const file of shouldCopy) {
     fs.copySync(`${tempDir}/${file}`, `${destination}/${file}`);
   }
+
+  logger.succeed(`Unpacking template... ${chalk.green("success!")}`, true);
+  return;
 }
 
-export async function cleanupTemp(tempDirectory, logger) {
-  logger.log("Cleaning up temporary files");
-  tempDirectory?.cleanup();
+export function cleanupTemp(tempDirectory, logger) {
+  return new Promise((resolve, reject) => {
+    logger.log("Cleaning up...");
+    tempDirectory?.cleanup();
+    logger.succeed(`Cleaning up... ${chalk.green("success!")}`, true);
+    resolve();
+  });
 }
