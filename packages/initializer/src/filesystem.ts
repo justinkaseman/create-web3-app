@@ -48,7 +48,7 @@ export const downloadIntoTemp = async (template, path, logger) => {
   try {
     const download = await githubDownload(
       {
-        url: `https://github.com/justinkaseman/create-web3-app/tree/develop/packages/cwa-templates/${template}`,
+        url: `https://github.com/justinkaseman/create-web3-app/tree/master/packages/cwa-templates/${template}`,
         to: path,
       },
       logger
