@@ -5,7 +5,7 @@ export function logTitle() {
   const width = process.stdout.columns;
   if (width > 100)
     log(
-      chalk.blue(
+      chalk.cyan(
         `\n                     _                      _      _____                     ` +
           `\n                    | |                    | |    |____ |                    ` +
           `\n  ___ _ __ ___  __ _| |_ ___  __      _____| |__      / /   __ _ _ __  _ __  ` +
@@ -17,5 +17,5 @@ export function logTitle() {
           `\n`
       )
     );
-  else log(chalk.bold.underline.blue("\nCREATE-WEB3-APP\n"));
+  else log(chalk.bold.underline.cyan("\nCREATE-WEB3-APP\n"));
 }

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"hi\""
+    "start": "@create-web3-app/scripts ipfs"
   },
   "author": "",
   "license": "ISC",
