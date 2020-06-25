@@ -1,6 +1,6 @@
 {
   "name": "create-web3-app",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.2",
   "description": "Command line interface for create-web3-app",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
@@ -34,8 +34,8 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "@create-web3-app/clone": "0.0.2-alpha.0",
-    "@create-web3-app/initializer": "0.0.2-alpha.0",
+    "@create-web3-app/clone": "^0.0.2",
+    "@create-web3-app/initializer": "^0.0.2",
     "chalk": "^4.0.0",
     "semver": "^6.3.0",
     "source-map-support": "^0.5.19",

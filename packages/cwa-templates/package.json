@@ -1,6 +1,6 @@
 {
   "name": "@create-web3-app/cwa-templates",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.2",
   "description": "Default template for create-web3-app",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",

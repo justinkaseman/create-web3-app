@@ -1,6 +1,6 @@
 {
   "name": "@create-web3-app/initializer",
-  "version": "0.0.2-alpha.0",
+  "version": "0.0.2",
   "description": "Initialize your web3 code",
   "author": "Justin Kaseman <justinkaseman@live.com>",
   "license": "MIT",
