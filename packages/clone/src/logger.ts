@@ -48,4 +48,12 @@ export class Logger {
     this.logger.fail(message);
     if (continueSpinning) this.logger = ora(oraOptions).start();
   }
+
+  start() {
+    if (this.logger && !this.logger.isSpinning) this.logger.start();
+  }
+
+  stop() {
+    if (this.logger && this.logger.isSpinning) this.logger.stop();
+  }
 }

@@ -107,7 +107,7 @@ export function migrate() {
     const spinner = new Logger();
 
     try {
-      fundERC20(spinner);
+      await fundERC20(spinner);
     } catch (error) {
       throw `Error while running deployments:\n${error}`;
     }
@@ -178,6 +178,11 @@ export function migrate() {
             );
           });
         }
+      }
+
+      if (!buidler && !truffleConfig) {
+        spinner.stop();
+        return resolve();
       }
 
       // No known project could be found
