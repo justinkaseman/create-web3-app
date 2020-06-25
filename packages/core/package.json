@@ -33,16 +33,17 @@
   "bugs": {
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@create-web3-app/clone": "0.0.2-alpha.0",
     "@create-web3-app/initializer": "0.0.2-alpha.0",
     "chalk": "^4.0.0",
     "semver": "^6.3.0",
     "source-map-support": "^0.5.19",
-    "ts-jest": "^26.1.0",
-    "typescript": "^3.9.3",
     "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.3"
   },
   "scripts": {
     "build": "tsc",

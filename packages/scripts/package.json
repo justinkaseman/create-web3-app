@@ -7,7 +7,7 @@
   "homepage": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/scripts#readme",
   "repository": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/scripts",
   "bin": {
-    "@create-web3-app/scripts": "./lib/index.js"
+    "cwa-scripts": "./lib/index.js"
   },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
