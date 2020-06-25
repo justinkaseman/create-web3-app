@@ -40,7 +40,6 @@
     "chalk": "^4.0.0",
     "semver": "^6.3.0",
     "source-map-support": "^0.5.19",
-    "terraform-npm": "^0.2.6",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.3",
     "yargs": "^15.3.1"
