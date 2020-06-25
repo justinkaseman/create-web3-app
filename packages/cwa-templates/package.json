@@ -9,6 +9,9 @@
   "files": [
     "template"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "ethereum",
     "smart-contracts",
