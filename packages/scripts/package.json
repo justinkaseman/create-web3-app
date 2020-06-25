@@ -6,6 +6,9 @@
   "license": "MIT",
   "homepage": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/scripts#readme",
   "repository": "https://github.com/justinkaseman/create-web3-app/tree/master/packages/scripts",
+  "bin": {
+    "@create-web3-app/scripts": "./lib/index.js"
+  },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "directories": {
@@ -31,13 +34,11 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "ipfs": "^0.46.0",
-    "ipfs-deploy": "7.14.0",
-    "ipfs-http-client": "^44.2.0",
+    "fs-extra": "9.0.1",
     "yargs": "15.3.1"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp ./src/ipfs_server/package.json ./lib/ipfs_server/package.json && cp ./src/ipfs_server/package-lock.json ./lib/ipfs_server/package-lock.json",
     "clean": "rimraf lib",
     "prepare": "yarn clean && yarn build",
     "test": "jest"

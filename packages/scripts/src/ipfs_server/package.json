@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "ipfs": "^0.46.0",
+    "ipfs-deploy": "7.14.0",
+    "ipfs-http-client": "^44.2.0"
+  }
+}

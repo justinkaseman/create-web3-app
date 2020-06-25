@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fork = require("child_process").fork;
-const yargs = require("yargs").argv;
+import * as yargs from "yargs";
 
 yargs
   .scriptName("@create-web3-app/scripts")
@@ -17,9 +17,9 @@ yargs
       });
     },
     function (argv) {
-      const result = fork("./scripts/ipfs", [], {
+      const script = require.resolve("./scripts/ipfs");
+      fork(script, [], {
         stdio: "inherit",
-        cwd: process.execPath,
       });
     }
   )

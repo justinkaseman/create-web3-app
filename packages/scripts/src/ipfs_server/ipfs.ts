@@ -2,7 +2,7 @@ const ipfs = require("ipfs");
 const IpfsHttpClient = require("ipfs-http-client");
 const { globSource } = IpfsHttpClient;
 
-async function main() {
+async function serve() {
   const IPFS = await ipfs.create();
   await IPFS.start();
   for await (const file of IPFS.add(
@@ -12,4 +12,5 @@ async function main() {
     console.log(file);
   }
 }
-main();
+
+serve();
