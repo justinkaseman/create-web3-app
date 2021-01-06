@@ -31,7 +31,7 @@
     "url": "https://github.com/justinkaseman/create-web3-app/issues"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chalk": "4.1.0",
     "fs-extra": "^8.1.0",
     "inquirer": "^7.0.0",
